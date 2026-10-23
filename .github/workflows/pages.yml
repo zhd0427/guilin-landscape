@@ -26,6 +26,7 @@ jobs:
         run: |
           node test-fractures.cjs
           node test-scenic.cjs
+          node test-course.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

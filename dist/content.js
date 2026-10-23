@@ -99,17 +99,18 @@ window.GuilinContent={
     {
       "type": "poem",
       "title": "《送桂州严大夫同用南字》",
-      "titleEn": "On Sending Prefect Yan to Guizhou",
+      "titleEn": "A Farewell to Prefect Yan, Bound for Guizhou",
       "author": "唐 · 韩愈 / 原诗节选",
       "authorEn": "Han Yu · Tang dynasty / excerpt",
       "preview": "江作青罗带，山如碧玉篸。",
       "original": "江作青罗带，山如碧玉篸。",
       "interpretation": "The river, a blue-green silk ribbon; the hills, jade hairpins.",
-      "background": "韩愈在送别赴桂州任职的友人时，以丝带比江流、以玉簪比山峰，把具体景色变成可想象的形状。这是诗歌中的比喻，不是地质描述。本站英文以解释意象为目的。",
-      "backgroundEn": "Written for a friend departing to take office in Guizhou, the poem compares the river to a silk ribbon and the hills to jade hairpins. These are poetic images, not geological descriptions. The English interpretation explains those images.",
+      "background": "韩愈在送别赴桂州任职的友人时，以丝带比江流、以玉簪比山峰，把具体景色变成可想象的形状。这是诗歌中的比喻，不是地质描述。本站英文以解释意象为目的。 诗中的“桂州”指今桂林一带。",
+      "backgroundEn": "Written for a friend departing to take office in Guizhou, the poem compares the river to a silk ribbon and the hills to jade hairpins. These are poetic images, not geological descriptions. The English interpretation explains those images. Here, the historical name Guizhou refers to the area of present-day Guilin.",
       "meta": "原文据《全唐诗》卷344相关学术引文核对；“篸”在此指簪。英文为本站释义。",
       "metaEn": "Original wording checked against a scholarly citation of Complete Tang Poems, vol. 344. English interpretation by this site.",
-      "source": "https://ir.lib.shimane-u.ac.jp/files/public/0/6890/20170425005236105493/a007026003.pdf"
+      "source": "https://ir.lib.shimane-u.ac.jp/files/public/0/6890/20170425005236105493/a007026003.pdf",
+      "contextSource": "https://www.tup.tsinghua.edu.cn/bookscenter/bookpreface?id=09249501"
     },
     {
       "type": "poem",

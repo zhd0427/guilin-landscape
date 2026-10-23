@@ -5,6 +5,12 @@ let place=0,palette='jade',inkView=false,cardMode='art',geoView='surface',playin
 let waterPath=[0],waterRunning=false,waterComplete=false,waterProgress=0,hintVisible=false,waterFrame=0,boarding=false;
 let cardInspiration=null;
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function bilingual(element,zh,en,html=false){
+ element.classList.add('bilingual-text');element.replaceChildren();
+ const values=lang==='zh'?[[zh,'zh-CN'],[en,'en']]:[[en,'en'],[zh,'zh-CN']];
+ values.forEach(([value,language],index)=>{const span=document.createElement('span');span.className=index?'reading-translation':'reading-primary';span.lang=language;if(html)span.innerHTML=value;else span.textContent=value;element.append(span)});
+}
+window.GuilinBilingual={render:bilingual};
 const realPlaces=window.GuilinContent.places,cultureWorks=window.GuilinContent.works;
 const stages=[
  ['ROCK & FRACTURES','先有岩石，也先有裂隙','Rock, with a way in','石灰岩中的节理、裂隙与层面为水提供了通道。地形演化还受构造、岩性和排水条件影响，起点不是一整块没有缝隙的石头。','Joints, fractures and bedding planes give water a way into limestone. Structure, rock type and drainage also matter; the starting point is not a perfectly solid block.'],
@@ -24,13 +30,13 @@ function renderCamera(){
  $('#scenic-focus').style.left=d.point[0]*100+'%';$('#scenic-focus').style.top=d.point[1]*100+'%';
  $('#scenic-focus').hidden=detailView;$('#scenic-focus-label').textContent=T(d.label,d.labelEn);
  $('#scenic-focus').setAttribute('aria-label',T('放大查看'+d.label,'Explore '+d.labelEn));
- $('#camera-caption').textContent=detailView?T(d.note,d.noteEn):T('全景 · 点击「'+d.label+'」或右上角按钮，走近细节。','Full view · select “'+d.labelEn+'” or the button above to explore the detail.');
+ bilingual($('#camera-caption'),detailView?d.note:'全景 · 点击「'+d.label+'」或右上角按钮，走近细节。',detailView?d.noteEn:'Full view · select “'+d.labelEn+'” or the button above to explore the detail.');
 }
 function renderPlace(zoom=detailView){
  detailView=zoom;const p=realPlaces[place],img=$('#destination-photo');img.alt=T(p.name+'实景',p.en+' photograph');
  $('#place-index').textContent=String(place+1).padStart(2,'0');$('#place-en').textContent=p.en.toUpperCase();$('#place-title').textContent=T(p.name,p.en);
- $('#destination-name').textContent=T(p.name,p.en);$('#destination-region').textContent=T(p.region,p.regionEn);$('#place-location').textContent='⌖ '+T(p.location,p.locationEn);
- $('#place-description').textContent=T(p.story,p.storyEn);$('#place-look').textContent=T(p.look,p.lookEn);$('#place-source').href=p.source;
+ $('#destination-name').textContent=T(p.name,p.en);$('#destination-region').textContent=T(p.region,p.regionEn);bilingual($('#place-location'),'⌖ '+p.location,'⌖ '+p.locationEn);
+ bilingual($('#place-description'),p.story,p.storyEn);bilingual($('#place-look'),p.look,p.lookEn);$('#place-source').href=p.source;
  $('#photo-credit').textContent=p.author+' · '+p.license+' · '+T('全景 / 细节','full view / detail');
  $$('[data-place]').forEach(b=>{const active=Number(b.dataset.place)===place;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
  renderPending();renderCamera();
@@ -79,7 +85,7 @@ function confirmPostcardUpdate(){
  collectionFeedbackTimer=setTimeout(()=>{notice.hidden=true},3200);
 }
 $('#collect-place').addEventListener('click',()=>{$('#card-place').value=String(place);$('#photo-pan').value='50';setCardMode('photo');confirmPostcardUpdate()});
-function setLanguage(next){lang=next;document.documentElement.lang=lang==='zh'?'zh-CN':'en';$$('[data-zh][data-en]').forEach(e=>e.innerHTML=e.dataset[lang]);$('#language').innerHTML=lang==='zh'?'EN <span>↗</span>':'中文 <span>↗</span>';$('#language').setAttribute('aria-label',T('Switch to English','切换至中文'));const c=$('#card-caption');if(['此刻，心在山水之间。','Between mountains and water.'].includes(c.value))c.value=T('此刻，心在山水之间。','Between mountains and water.');c.placeholder=T('写一句心情','Write a little message');$('#geo-canvas').setAttribute('aria-label',T('可控制的地表与地下喀斯特过程示意','Interactive surface and underground karst process illustration'));$('#postcard-canvas').setAttribute('aria-label',T('你的双语桂林明信片预览','Your bilingual Guilin postcard preview'));renderPlace($('#destination-photo').classList.contains('close-view'));updateEvolution();renderCulture();renderGame();drawPostcard();updateSoundLabel();$('#game-hint').textContent=hintVisible?T('隐藏路线提示','Hide route hint'):T('显示路线提示','Show route hint');try{localStorage.setItem('guilin-language',lang)}catch{}}
+function setLanguage(next){lang=next;document.documentElement.lang=lang==='zh'?'zh-CN':'en';$$('[data-zh][data-en]').forEach(e=>{if(e.matches('p,h2,h3,h4'))bilingual(e,e.dataset.zh,e.dataset.en,true);else e.innerHTML=e.dataset[lang]});$('#language').innerHTML=lang==='zh'?'EN first <span>↗</span>':'中文优先 <span>↗</span>';$('#language').setAttribute('aria-label',T('Put English first; both languages remain visible','中文优先；保留中英对照'));const c=$('#card-caption');if(['此刻，心在山水之间。','Between mountains and water.'].includes(c.value))c.value=T('此刻，心在山水之间。','Between mountains and water.');c.placeholder=T('写一句心情','Write a little message');$('#geo-canvas').setAttribute('aria-label',T('可控制的地表与地下喀斯特过程示意','Interactive surface and underground karst process illustration'));$('#postcard-canvas').setAttribute('aria-label',T('你的双语桂林明信片预览','Your bilingual Guilin postcard preview'));renderPlace($('#destination-photo').classList.contains('close-view'));updateEvolution();renderCulture();renderGame();drawPostcard();updateSoundLabel();$('#game-hint').textContent=hintVisible?T('隐藏路线提示','Hide route hint'):T('显示路线提示','Show route hint');document.dispatchEvent(new CustomEvent('guilin-languagechange',{detail:lang}));try{localStorage.setItem('guilin-language',lang)}catch{}}
 $('#language').addEventListener('click',()=>setLanguage(lang==='zh'?'en':'zh'));
 
 // Smooth cutaway terrain illustrates processes, rather than a surveyed site.
@@ -91,7 +97,7 @@ function drawGeology(time=0){const{ctx,w,h}=configureCanvas($('#geo-canvas')),p=
  for(let sum=0;sum<N+M;sum++)for(let i=0;i<N;i++){const j=sum-i;if(j<0||j>=M)continue;const x=i/N,z=j/M,dx=1/N,dz=1/M,e=terrainHeight(x,z,p),ez=terrainHeight(x+dx,z+dz,p),slope=(e-ez)*60,green=Math.round(111+e*150+Math.max(-15,Math.min(15,slope))),red=Math.round(green*.78),blue=Math.round(green*.67);const riverCenter=.49+Math.sin(z*6)*.065,river=Math.abs(x-riverCenter)<(.012+.018*p)&&e<.11;face([project(x,z,e),project(x+dx,z,terrainHeight(x+dx,z,p)),project(x+dx,z+dz,ez),project(x,z+dz,terrainHeight(x,z+dz,p))],river&&p>.47?'#7eb8b5':`rgb(${red},${green},${blue})`)}
  ctx.strokeStyle='#4a9baeb3';ctx.lineWidth=1;ctx.setLineDash([3,4]);for(let i=0;i<5;i++){const x=.12+i*.18,z=.25+(i%2)*.2,top=project(x,z,terrainHeight(x,z,p));ctx.beginPath();ctx.moveTo(top[0]+5,top[1]-45+Math.sin(time/600+i)*5);ctx.lineTo(top[0],top[1]-3);ctx.stroke()}ctx.setLineDash([]);ctx.font='10px '+getComputedStyle(document.body).fontFamily;ctx.fillStyle='#456248';ctx.fillText(T('降水与地表排水','Rain & surface drainage'),w*.07,h*.14);ctx.fillText(T('岩层剖面','Rock strata'),w*.08,h*.8);ctx.strokeStyle='#6d8260';ctx.beginPath();ctx.moveTo(w*.26,h*.79);ctx.lineTo(w*.39,h*.77);ctx.stroke();if(p>.7){ctx.fillStyle='#3d6249';ctx.font='9px '+getComputedStyle(document.body).fontFamily;ctx.fillText(T('峰丛与峰林可共存','Cone and tower karst can coexist'),w*.4,h*.87)}}
 function drawUnderground(ctx,w,h,p,time){const margin=w*.065,top=h*.25,bottom=h*.83;ctx.fillStyle='#7d9273';ctx.beginPath();ctx.moveTo(margin,top);ctx.bezierCurveTo(w*.24,top-h*.04,w*.4,top+h*.04,w*.55,top);ctx.bezierCurveTo(w*.7,top-h*.07,w*.82,top,w-margin,top-h*.01);ctx.lineTo(w-margin,bottom);ctx.lineTo(margin,bottom);ctx.closePath();ctx.fill();ctx.save();ctx.clip();ctx.strokeStyle='#becaa04d';ctx.lineWidth=1;for(let i=0;i<7;i++){ctx.beginPath();ctx.moveTo(0,top+25+i*25);ctx.bezierCurveTo(w*.4,top+18+i*25,w*.6,top+35+i*25,w,top+25+i*25);ctx.stroke()}const paths=[[[.2,.25],[.25,.41],[.3,.49],[.38,.61]],[[.55,.22],[.52,.40],[.58,.55],[.58,.63]],[[.8,.25],[.75,.43],[.68,.56],[.62,.65]],[[.38,.61],[.5,.65],[.7,.66],[.92,.76]]];const grow=smooth(.06,.85,p);for(let i=0;i<paths.length;i++){ctx.strokeStyle='#344f46';ctx.lineWidth=1.5+grow*(i===3?13:8);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();paths[i].forEach(([x,y],j)=>j?ctx.lineTo(x*w,y*h):ctx.moveTo(x*w,y*h));ctx.stroke();if(p>.05){ctx.strokeStyle='#8bd3d7';ctx.lineWidth=1+grow*1.5;ctx.setLineDash([4,9]);ctx.lineDashOffset=-time/85;ctx.stroke();ctx.setLineDash([])}}const cave=smooth(.4,1,p);ctx.fillStyle='#33584c';ctx.beginPath();ctx.ellipse(w*.57,h*.63,w*.105*cave,h*.058*cave,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#7ab8bb';ctx.fillRect(w*.5,h*.651,w*.15*cave,h*.012*cave);ctx.restore();ctx.strokeStyle='#5d9587';ctx.lineWidth=1.2;for(let i=0;i<9;i++){const x=w*(.12+i*.09),offset=(time/40+i*11)%40;ctx.beginPath();ctx.moveTo(x+3,h*.09+offset);ctx.lineTo(x,h*.09+offset+9);ctx.stroke()}ctx.font='10px '+getComputedStyle(document.body).fontFamily;ctx.fillStyle='#3c6047';ctx.fillText(T('空气与土壤中的 CO₂','CO₂ from air & soil'),w*.09,h*.12);ctx.fillText(T('水沿裂隙渗入','Water follows fractures'),w*.07,h*.39);ctx.fillText(T('随时间扩大的地下通道','Passages widen over time'),w*.44,h*.91)}
-function updateEvolution(){const value=Number($('#evolution').value),index=Math.min(3,Math.floor(value/25)),s=stages[index];$('#geo-percent').textContent=value+'%';$('#geo-number').textContent=String(index+1).padStart(2,'0');$('#stage-label').textContent=s[0];$('#stage-title').textContent=s[T(1,2)];$('#stage-description').textContent=s[T(3,4)];$$('[data-stage]').forEach((b,i)=>b.classList.toggle('active',i===index));drawGeology(performance.now())}
+function updateEvolution(){const value=Number($('#evolution').value),index=Math.min(3,Math.floor(value/25)),s=stages[index];$('#geo-percent').textContent=value+'%';$('#geo-number').textContent=String(index+1).padStart(2,'0');$('#stage-label').textContent=s[0];bilingual($('#stage-title'),s[1],s[2]);bilingual($('#stage-description'),s[3],s[4]);$$('[data-stage]').forEach((b,i)=>b.classList.toggle('active',i===index));drawGeology(performance.now())}
 function stopTimeline(){playing=false;cancelAnimationFrame(playFrame);$('#play-timeline').textContent='▶';$('#play-timeline').setAttribute('aria-pressed','false')}
 $('#evolution').addEventListener('input',()=>{stopTimeline();updateEvolution()});$$('[data-stage]').forEach(b=>b.addEventListener('click',()=>{stopTimeline();$('#evolution').value=b.dataset.stage;updateEvolution()}));
 $('#play-timeline').addEventListener('click',()=>{if(playing){stopTimeline();return}playing=true;$('#play-timeline').textContent='Ⅱ';$('#play-timeline').setAttribute('aria-pressed','true');let value=Number($('#evolution').value);if(value>=100)value=0;let last=performance.now();function frame(t){if(!playing)return;value+=(t-last)/190;last=t;$('#evolution').value=String(Math.min(100,Math.round(value)));updateEvolution();if(value>=100)stopTimeline();else playFrame=requestAnimationFrame(frame)}playFrame=requestAnimationFrame(frame)});
@@ -116,7 +122,27 @@ let draggingDrop=false;$('#game-board').addEventListener('pointerdown',e=>{if(wa
 
 function setArtStyle(ink){inkView=ink;$('#view-ink').classList.toggle('active',ink);$('#view-green').classList.toggle('active',!ink);$('#view-ink').setAttribute('aria-pressed',String(ink));$('#view-green').setAttribute('aria-pressed',String(!ink));const{ctx,w,h}=configureCanvas($('#culture-canvas'));renderLandscape(ctx,w,h,{palette:ink?'ink':'jade',mist:.4,boat:true})}
 $('#view-ink').addEventListener('click',()=>setArtStyle(true));$('#view-green').addEventListener('click',()=>setArtStyle(false));
-function renderCulture(){const open=$$('.work-card[open]').map(e=>e.dataset.work);$('#culture-works').replaceChildren();cultureWorks.forEach((work,i)=>{const detail=document.createElement('details');detail.className='work-card';detail.dataset.work=String(i);detail.open=open.includes(String(i));const summary=document.createElement('summary');summary.innerHTML=`<span class="work-type">${work.type==='painting'?T('画','ART'):T('诗','POEM')}</span><div><h4></h4><p></p></div><span class="work-preview"></span><span class="work-expand">+</span>`;summary.querySelector('h4').textContent=T(work.title,work.titleEn);summary.querySelector('p').textContent=T(work.author,work.authorEn);summary.querySelector('.work-preview').textContent=T(work.preview,work.type==='painting'?'Ink, mist and open space.':work.interpretation);const body=document.createElement('div');body.className='work-body';const left=document.createElement('div');if(work.image){const img=document.createElement('img');img.src=work.image;img.alt=work.title;img.className='work-painting';left.append(img)}const original=document.createElement('blockquote');original.textContent=work.original;left.append(original);const english=document.createElement('p');english.className='work-english';english.textContent=work.interpretation;left.append(english);const right=document.createElement('div'),heading=document.createElement('h5');heading.textContent=T(work.type==='painting'?'作品与观看':'原文节选与背景',work.type==='painting'?'THE WORK & HOW TO LOOK':'EXCERPT & CONTEXT');right.append(heading);const background=document.createElement('p');background.textContent=T(work.background,work.backgroundEn);right.append(background);const meta=document.createElement('p');meta.className='work-meta';meta.textContent=T(work.meta,work.metaEn);right.append(meta);const reference=document.createElement('a');reference.href=work.source;reference.target='_blank';reference.rel='noopener';reference.className='work-reference';reference.textContent=T('查看原文与馆藏来源 ↗','Read the source / museum record ↗');right.append(reference);appendWorkPostcardAction(work,right,i);body.append(left,right);detail.append(summary,body);$('#culture-works').append(detail)})}
+function renderCulture(){
+ const open=$$('.work-card[open]').map(e=>e.dataset.work);$('#culture-works').replaceChildren();
+ cultureWorks.forEach((work,i)=>{
+  const detail=document.createElement('details');detail.className='work-card';detail.dataset.work=String(i);detail.open=open.includes(String(i));
+  const summary=document.createElement('summary');summary.innerHTML='<span class="work-type"></span><div><h4></h4><p></p></div><span class="work-preview"></span><span class="work-expand">+</span>';
+  summary.querySelector('.work-type').textContent=work.type==='painting'?T('画','ART'):T('诗','POEM');
+  bilingual(summary.querySelector('h4'),work.title,work.titleEn);bilingual(summary.querySelector('p'),work.author,work.authorEn);
+  summary.querySelector('.work-preview').textContent=T(work.preview,work.type==='painting'?'Ink, mist and open space.':work.interpretation);
+  const body=document.createElement('div');body.className='work-body';const left=document.createElement('div');
+  if(work.image){const img=document.createElement('img');img.src=work.image;img.alt=work.title+' / '+work.titleEn;img.className='work-painting';left.append(img)}
+  const original=document.createElement('blockquote');original.lang='zh-CN';original.textContent=work.original;left.append(original);
+  const english=document.createElement('p');english.lang='en';english.className='work-english';english.textContent=work.interpretation;left.append(english);
+  const credit=document.createElement('p');credit.className='translation-credit';bilingual(credit,work.type==='painting'?'作品说明 · 本站英文释义':'原诗节选 · 本站英文意译','Project-written English interpretation · Chinese original above');left.append(credit);
+  const right=document.createElement('div'),heading=document.createElement('h5');heading.textContent=work.type==='painting'?'作品与观看 / THE WORK & HOW TO LOOK':'原文节选与背景 / EXCERPT & CONTEXT';right.append(heading);
+  const background=document.createElement('p');bilingual(background,work.background,work.backgroundEn);right.append(background);
+  const meta=document.createElement('p');meta.className='work-meta';bilingual(meta,work.meta,work.metaEn);right.append(meta);
+  if(work.contextSource){const context=document.createElement('a');context.href=work.contextSource;context.target='_blank';context.rel='noopener';context.className='work-reference';context.textContent='历史地名说明 / Historical place-name context ↗';right.append(context,document.createElement('br'))}
+  const reference=document.createElement('a');reference.href=work.source;reference.target='_blank';reference.rel='noopener';reference.className='work-reference';reference.textContent=T('查看原文与馆藏来源 ↗','Read the source / museum record ↗');right.append(reference);
+  appendWorkPostcardAction(work,right,i);body.append(left,right);detail.append(summary,body);$('#culture-works').append(detail);
+ });
+}
 
 function appendWorkPostcardAction(work,container,index){
  const button=document.createElement('button');button.type='button';button.className='work-caption-action text-link';button.dataset.workPostcard=String(index);
@@ -128,7 +154,7 @@ function appendWorkPostcardAction(work,container,index){
      $('#card-caption').value=T(work.original,work.titleEn);
      $$('[data-palette]').forEach(b=>{const selected=b.dataset.palette==='ink';b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected))});
      setCardMode('art');
-   }else{$('#card-caption').value=T(work.original,work.interpretation).slice(0,60);drawPostcard()}
+   }else{$('#card-caption').value=T(work.original,work.interpretation).slice(0,160);drawPostcard()}
    confirmPostcardUpdate();
  });
  container.append(button);
@@ -141,7 +167,7 @@ function drawPostcard(){
  note.hidden=!inspired;
  if(!inspired){note.replaceChildren();return}
  const work=cardInspiration;
- note.replaceChildren(document.createTextNode(T('画意参考：','Inspired by: ')+T(work.title+' · '+work.author,work.titleEn+' · '+work.authorEn)+' · '));
+ bilingual(note,'画意参考：'+work.title+' · '+work.author,'Inspired by: '+work.titleEn+' · '+work.authorEn);
  const link=document.createElement('a');link.href=work.source;link.target='_blank';link.rel='noopener';link.textContent=T('查看馆藏原作 ↗','View museum record ↗');note.append(link);
  const canvas=$('#postcard-canvas'),ctx=canvas.getContext('2d');ctx.fillStyle=palettes[palette].paper;ctx.fillRect(52,1130,canvas.width-104,110);
  ctx.textAlign='center';ctx.fillStyle='#75866b';ctx.font='13px sans-serif';
@@ -167,7 +193,9 @@ if('IntersectionObserver'in window){const observer=new IntersectionObserver(entr
 
 const extraSources=[
  ...realPlaces.map(p=>({title:p.name+' / '+p.en,url:p.sourceImage,note:p.author+' · '+p.license+' · '+p.licenseUrl+' · cropped; photo adaptations retain the same licence'})),
- ...cultureWorks.map(w=>({title:w.title+' / '+w.author,url:w.source,note:w.type==='painting'?'馆藏记录与原作链接 / Museum record and original artwork link':'原文节选；英文为本站释义 / Original excerpt; English interpretation by this site'})),
+ ...cultureWorks.map(w=>({title:w.title+' / '+w.titleEn+' · '+w.authorEn,url:w.source,note:w.type==='painting'?'馆藏记录与原作链接 / Museum record and original artwork link':'原文节选；英文为本站释义 / Original excerpt; English interpretation by this site'})),
+ ...window.GuilinCourse.terms.map(term=>({title:term.zh+' / '+term.en,url:term.source,note:'文化词入门说明与本站英文示例 / Introductory cultural explanation and project-written English examples'})),
+ {title:'桂州与桂林 / Historical Guizhou and present-day Guilin',url:cultureWorks[0].contextSource,note:'历史地名背景 / Historical place-name context'},
  {title:'USGS · Karst Topography — Teachers Guide',url:'https://pubs.usgs.gov/of/1997/0536a/report.pdf',note:'降水、土壤 CO₂、裂隙和地下通道 / Rain, soil CO₂, fractures and passages'}
 ];
 extraSources.forEach(source=>{const li=document.createElement('li'),a=document.createElement('a'),p=document.createElement('p');a.href=source.url;a.target='_blank';a.rel='noopener';a.textContent=source.title;p.textContent=source.note;li.append(a,p);$('#sources ul').append(li)});
