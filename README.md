@@ -2,6 +2,16 @@
 
 用于“中国文化与国际传播”课程的中英文互动网站。
 
+## 在线访问 / Visit the website
+
+**[点击进入桂林山水网站 · Explore Guilin](https://guilin-mountains-meet-water.grandrain17.chatgpt.site/#home)**
+
+公开访问，无需登录，从竹筏首页开始旅程。分享时请使用上方首页链接。
+
+Open to the public, with no sign-in required. Start your journey on the bamboo-raft home screen.
+
+备用入口 / Alternative: [GitHub Pages](https://zhd0427.github.io/guilin-landscape/#home)。本仓库保存网站最新版源码。
+
 ## 本地打开
 
 所有运行文件位于 `dist/`，无需安装依赖。在项目目录执行 `node preview.cjs`，访问 `http://localhost:4173`。建议通过本地预览服务或线上网址使用照片明信片导出，避免浏览器对直接打开本地图片的安全限制。
