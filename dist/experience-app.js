@@ -71,7 +71,14 @@ $('#reset-camera').addEventListener('click',toggleScenicDetail);
 $('#scenic-focus').addEventListener('click',toggleScenicDetail);
 
 $('#board-raft').addEventListener('click',()=>{if(boarding)return;boarding=true;$('#home').classList.add('boarding');$('#board-raft').disabled=true;setTimeout(()=>{$('#journey').scrollIntoView({behavior:reducedMotion?'instant':'smooth'});history.replaceState(null,'','#journey');setTimeout(()=>{$('#home').classList.remove('boarding');$('#board-raft').disabled=false;boarding=false},1000)},reducedMotion?0:850)});
-$('#collect-place').addEventListener('click',()=>{$('#card-place').value=String(place);$('#photo-pan').value='50';setCardMode('photo');$('#postcard').scrollIntoView({behavior:reducedMotion?'instant':'smooth'});history.replaceState(null,'','#postcard')});
+let collectionFeedbackTimer;
+function confirmPostcardUpdate(){
+ let notice=$('#collection-feedback');
+ if(!notice){notice=document.createElement('p');notice.id='collection-feedback';notice.className='collection-feedback';notice.setAttribute('role','status');notice.setAttribute('aria-live','polite');document.body.append(notice)}
+ clearTimeout(collectionFeedbackTimer);notice.hidden=false;notice.textContent=T('✓ 已加入明信片，可继续浏览。','✓ Added to your postcard. Keep exploring.');
+ collectionFeedbackTimer=setTimeout(()=>{notice.hidden=true},3200);
+}
+$('#collect-place').addEventListener('click',()=>{$('#card-place').value=String(place);$('#photo-pan').value='50';setCardMode('photo');confirmPostcardUpdate()});
 function setLanguage(next){lang=next;document.documentElement.lang=lang==='zh'?'zh-CN':'en';$$('[data-zh][data-en]').forEach(e=>e.innerHTML=e.dataset[lang]);$('#language').innerHTML=lang==='zh'?'EN <span>↗</span>':'中文 <span>↗</span>';$('#language').setAttribute('aria-label',T('Switch to English','切换至中文'));const c=$('#card-caption');if(['此刻，心在山水之间。','Between mountains and water.'].includes(c.value))c.value=T('此刻，心在山水之间。','Between mountains and water.');c.placeholder=T('写一句心情','Write a little message');$('#geo-canvas').setAttribute('aria-label',T('可控制的地表与地下喀斯特过程示意','Interactive surface and underground karst process illustration'));$('#postcard-canvas').setAttribute('aria-label',T('你的双语桂林明信片预览','Your bilingual Guilin postcard preview'));renderPlace($('#destination-photo').classList.contains('close-view'));updateEvolution();renderCulture();renderGame();drawPostcard();updateSoundLabel();$('#game-hint').textContent=hintVisible?T('隐藏路线提示','Hide route hint'):T('显示路线提示','Show route hint');try{localStorage.setItem('guilin-language',lang)}catch{}}
 $('#language').addEventListener('click',()=>setLanguage(lang==='zh'?'en':'zh'));
 
@@ -122,7 +129,7 @@ function appendWorkPostcardAction(work,container,index){
      $$('[data-palette]').forEach(b=>{const selected=b.dataset.palette==='ink';b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected))});
      setCardMode('art');
    }else{$('#card-caption').value=T(work.original,work.interpretation).slice(0,60);drawPostcard()}
-   $('#postcard').scrollIntoView({behavior:reducedMotion?'instant':'smooth'});history.replaceState(null,'','#postcard');
+   confirmPostcardUpdate();
  });
  container.append(button);
 }
