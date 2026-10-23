@@ -46,3 +46,12 @@
 @media(max-width:680px){.destination-photo-stage{aspect-ratio:3/2}.destination-photo-stage .camera-button{font-size:11px;min-height:40px;padding:8px 11px}.destination-photo-stage .scene-label{font-size:8px;max-width:48%}.scenic-focus{font-size:10px;gap:5px}.scenic-focus>span:last-child{padding:4px 6px}.camera-caption{padding:11px 15px;font-size:11px}.destination-photo-stage .destination-overlay h3{font-size:22px}.destination-photo-stage .destination-overlay{bottom:13px;left:16px}}
 @media(prefers-reduced-motion:reduce){.destination-photo-stage>img.scenic-photo{transition:none}.scenic-entering{animation:none}.focus-ring{transition:none}}
 @media(max-width:680px){.destination-photo-stage .destination-overlay{display:none}}
+
+/* River and stops share one responsive coordinate system at every viewport width. */
+.destination-frame>.river-route{height:auto}
+.river-route .route-map{position:relative;width:100%;height:112px}
+.river-route .route-map>svg{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.route-map .route-stop{width:44px;height:44px;padding:0;display:grid;place-items:center;transform:translate(-50%,-50%);z-index:1}
+.route-map .route-stop i{width:26px;height:26px;font-size:11px}
+.route-map .route-stop>span{position:absolute;top:calc(100% - 5px);left:50%;transform:translateX(-50%);font-size:10px;line-height:1.5}
+@media(max-width:680px){.river-route .route-map{height:108px}.route-map .route-stop>span{font-size:8px}}
