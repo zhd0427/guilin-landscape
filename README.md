@@ -10,6 +10,7 @@
 
 - 正文、景点故事、地貌说明、诗画背景与标题直接中英对照；顶部语言按钮调整阅读优先顺序并保存偏好。
 - “说山水 / Connect”课程板块：解释山水（shanshui）、留白（liubai）和意境（yijing），提供拼音、英文表达、双语示例与来源。
+- 课程板块按文化词汇、英语介绍两步纵向展开；电脑端介绍双语等宽并排，窄屏改为上下阅读。全站使用分语言字体、统一正文层级和间距，结尾双语居中对齐。
 - 英语介绍练习：三处景点 × 三个文化概念 × 三类受众，生成27种带中文对照的英语介绍参考，可一键复制，包含引入、解释与互动提问。`node test-course.cjs` 检查内容与初始化顺序。
 - 跨文化讨论与负责任传播提示：邀请听众讲述熟悉的风景，交代诗歌语境，保留照片授权与原作来源。
 - 点击竹筏启程，过渡进入沿江探索。
@@ -33,13 +34,14 @@
 - `dist/index.html`：内容与双语文本
 - `dist/style.css`：响应式页面样式
 - `dist/experience.css`：新互动模块与移动端适配
+- `dist/course.css`：全站双语排版、课程板块布局与响应式样式
+- `dist/course-content.js`：文化词汇与双语英语介绍数据
+- `dist/course-ui.js`：文化词汇选择与英语介绍生成交互
 - `dist/experience-app.js`：景点、地貌、水滴路径、诗画和明信片交互
 - `dist/fracture-model.js`：裂隙图、路径判定和动态路线提示的共用模型
 - `dist/scenery.js`：原创山水绘图
 - `dist/content.js`：真实景点、文化资料及素材署名
 - `dist/assets/`：图片和标识
-- `.github/workflows/pages.yml`：GitHub Pages 自动发布配置
+- `.openai/hosting.json`：Sites 发布配置
 
 景点照片已更新：Bernt Rostad 的象鼻山水月洞、Gerd Eichmann 的九马画山正面岩壁、Liuxingy 的兴坪漓江峰林。来源和许可见 content.js。照片支持全景与轻量近景，路线图独立位于照片下方，避免遮挡山体和江面。
-
-公开展示网址 / Public website: https://guilin-mountains-meet-water.grandrain17.chatgpt.site

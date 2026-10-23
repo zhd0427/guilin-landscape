@@ -34,7 +34,7 @@
   const v=views[viewId],t=terms.find(term=>term.id===termId),a=audiences[audienceId];
   if(!v||!t||!a)throw new Error('Choose a valid view, cultural idea and audience.');
   const opening=a.opening+' '+v.en+' in Guilin, southern China. '+v.detail;
-  const openingZh=a.opening+'中国南方桂林的'+v.zh+'。'+v.detailZh;
+  const openingZh=a.openingZh+'中国南方桂林的'+v.zh+'。'+v.detailZh;
   const bridge={
    shanshui:{en:'In Chinese art, shanshui means “mountains and water” and names a landscape painting tradition. Here, the view invites us to imagine our place in nature.',zh:'在中国艺术中，“山水”既是山与水，也是山水画传统。这片风景邀请我们想象自己与自然的关系。'},
    liubai:{en:'This view can help us explain liubai: open space in a painting can suggest water, mist or distance. Look for the space between the hills as well as the hills themselves.',zh:'借助眼前的景色，可以解释画中的“留白”：空白能让人联想到水、云雾或距离。观看山峰时，也看看山峰之间的空间。'},

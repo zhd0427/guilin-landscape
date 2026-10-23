@@ -9,6 +9,8 @@ for(const view of Object.keys(course.views))for(const term of course.terms)for(c
  assert.ok(draft.en.includes(term.id));
  assert.ok(draft.zh.includes(course.views[view].zh));
  assert.ok(draft.zh.includes(term.zh));
+ assert.ok(draft.zh.startsWith(course.audiences[audience].openingZh),'Chinese introductions must use the Chinese audience opening.');
+ assert.ok(!draft.zh.includes(course.audiences[audience].opening),'Chinese introductions must not mix in the English opening.');
  assert.equal(draft.en.split('\n\n').length,3,'Place, explanation and invitation must stay distinct.');
  assert.ok(draft.en.endsWith('?'),'Every draft should invite a response.');
  assert.ok(!/[\u3400-\u9fff]/.test(draft.en),'English draft must be understandable without reading Chinese.');
